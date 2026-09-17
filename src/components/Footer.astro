@@ -1,0 +1,153 @@
+---
+import { SERVICES } from '../data/services.js';
+import { SITE, waLink } from '../data/site.js';
+
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: 'Servicios',
+    links: SERVICES.map((service) => ({
+      href: `/servicios/${service.slug}/`,
+      label: service.name,
+    })),
+  },
+  {
+    title: 'Explorar',
+    links: [
+      { href: '/galeria/', label: 'Galería de trabajos' },
+      { href: '/#proceso', label: 'Cómo trabajamos' },
+      { href: '/#preguntas', label: 'Preguntas frecuentes' },
+      { href: '/contacto/', label: 'Pedir cotización' },
+    ],
+  },
+  {
+    title: 'Contacto',
+    links: [
+      { href: waLink(), label: 'WhatsApp', external: true },
+      { href: `mailto:${SITE.email}`, label: SITE.email, external: true },
+      { href: '/contacto/', label: 'Horarios y entregas' },
+    ],
+  },
+  {
+    title: 'Síguenos',
+    links: [
+      { href: SITE.social.instagram, label: 'Instagram', external: true },
+      { href: SITE.social.facebook, label: 'Facebook', external: true },
+      { href: SITE.social.tiktok, label: 'TikTok', external: true },
+    ],
+  },
+];
+---
+
+<footer class="foot">
+  <div class="wrap wrap--wide">
+    <p class="foot__note">
+      Las fotografías de este sitio corresponden a trabajos reales entregados por {SITE.name}.
+      Los nombres que aparecen en las piezas pertenecen a sus clientes y se muestran como
+      muestra del trabajo. Cada pedido se cotiza según material, tamaño y cantidad.
+    </p>
+
+    <hr class="hairline" />
+
+    <div class="foot__grid">
+      {
+        columns.map((column) => (
+          <section class="foot__col">
+            <h2 class="foot__title">{column.title}</h2>
+            <ul class="foot__list">
+              {column.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="foot__link"
+                    {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+
+    <hr class="hairline" />
+
+    <div class="foot__base">
+      <p class="foot__copy">
+        Copyright © {year} {SITE.name}. Todos los derechos reservados.
+      </p>
+      <p class="foot__copy foot__copy--muted">{SITE.city}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    padding-block: 2.5rem 3rem;
+    background: var(--c-bg-alt);
+    color: var(--c-ink-soft);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .foot__note {
+    max-width: 72ch;
+    margin-bottom: 1.25rem;
+    color: var(--c-ink-faint);
+  }
+
+  .foot :global(.hairline) {
+    margin-block: 1.25rem;
+  }
+
+  .foot__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 1.75rem 2rem;
+    padding-block: 0.5rem 1.25rem;
+  }
+
+  .foot__title {
+    margin-bottom: 0.65rem;
+    color: var(--c-ink);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+
+  .foot__list {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .foot__link {
+    color: var(--c-ink-soft);
+    transition: color 0.2s var(--ease);
+  }
+
+  .foot__link:hover {
+    color: var(--c-ink);
+    text-decoration: underline;
+  }
+
+  .foot__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+  }
+
+  .foot__copy {
+    margin: 0;
+  }
+
+  .foot__copy--muted {
+    color: var(--c-ink-faint);
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+import { Font } from 'astro:assets';
+
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../data/site.js';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Usa el título tal cual, sin el sufijo de marca (para la portada). */
+  bareTitle?: boolean;
+  image?: string;
+}
+
+const {
+  title,
+  description = SITE.description,
+  bareTitle = false,
+  image = '/og.png',
+} = Astro.props;
+
+const pageTitle = bareTitle ? title : `${title} — ${SITE.name}`;
+const base = Astro.site ?? new URL(SITE.url);
+const canonical = new URL(Astro.url.pathname, base).href;
+const ogImage = new URL(image, base).href;
+
+const businessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: SITE.name,
+  description: SITE.description,
+  url: SITE.url,
+  image: ogImage,
+  email: SITE.email,
+  telephone: `+${SITE.whatsapp}`,
+  address: { '@type': 'PostalAddress', addressLocality: SITE.city },
+  sameAs: Object.values(SITE.social),
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="es_MX" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <Font cssVariable="--font-inter" preload />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(businessSchema)} />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Revelado progresivo de secciones conforme entran al viewport.
+      const targets = document.querySelectorAll<HTMLElement>('.reveal');
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        targets.forEach((el) => el.classList.add('is-in'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              entry.target.classList.add('is-in');
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px', threshold: 0.08 },
+        );
+
+        targets.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>
