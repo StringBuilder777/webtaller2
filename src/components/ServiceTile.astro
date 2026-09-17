@@ -20,7 +20,7 @@ const photo = getPhoto(service.heroId);
 
 <a class:list={['stile', { 'stile--wide': wide }]} href={`/servicios/${service.slug}/`}>
   <div class="stile__media">
-    <PhotoCard photo={photo} ratio={wide ? 'landscape' : 'auto'} sizes={sizes} width={1100} />
+    <PhotoCard photo={photo} ratio="landscape" sizes={sizes} width={1100} />
   </div>
 
   <div class="stile__body">

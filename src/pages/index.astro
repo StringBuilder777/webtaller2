@@ -269,11 +269,12 @@ const faq = [
   /* Encabezados de sección ---------------------------------------------- */
 
   .sec-head {
-    max-width: 24ch;
     margin-bottom: clamp(2rem, 4.5vw, 3.5rem);
   }
 
+  /* El límite va en el titular: en `ch` se mide contra su propio tamaño. */
   .sec-head .t-display {
+    max-width: 17ch;
     margin-top: 0.4rem;
   }
 
