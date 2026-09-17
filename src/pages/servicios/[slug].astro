@@ -1,0 +1,218 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import PhotoCard from '../../components/PhotoCard.astro';
+import ServiceTile from '../../components/ServiceTile.astro';
+import { byTag, getPhoto } from '../../data/gallery.js';
+import { SERVICES } from '../../data/services.js';
+
+export function getStaticPaths() {
+  return SERVICES.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const hero = getPhoto(service.heroId);
+const photos = byTag(service.tag).filter((photo) => photo.id !== service.heroId);
+const others = SERVICES.filter((item) => item.slug !== service.slug).slice(0, 3);
+---
+
+<BaseLayout title={service.name} description={service.summary}>
+  <!-- Encabezado -->
+  <section class="head">
+    <div class="wrap">
+      <p class="t-eyebrow">{service.name}</p>
+      <h1 class="t-hero head__title t-balance">{service.tagline}</h1>
+      <p class="t-lead head__lead">{service.summary}</p>
+    </div>
+
+    <div class="wrap wrap--wide head__media">
+      <PhotoCard
+        photo={hero}
+        ratio="landscape"
+        width={1800}
+        sizes="(max-width: 1440px) 92vw, 1360px"
+        eager
+      />
+    </div>
+  </section>
+
+  <!-- Descripción y materiales -->
+  <section class="section section--tight">
+    <div class="wrap intro reveal">
+      <p class="t-lead intro__text">{service.description}</p>
+      <ul class="mats">
+        {service.materials.map((material) => <li class="mats__pill t-small">{material}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Características -->
+  <section class="section section--alt">
+    <div class="wrap wrap--wide">
+      <h2 class="t-display feat__title t-balance reveal">Lo que incluye.</h2>
+
+      <div class="feats">
+        {
+          service.features.map((feature, i) => (
+            <article class="feat reveal" style={`--reveal-delay:${(i % 2) * 80}ms`}>
+              <h3 class="t-headline">{feature.title}</h3>
+              <p class="t-body t-soft">{feature.text}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Galería del servicio -->
+  {
+    photos.length > 0 && (
+      <section class="section">
+        <div class="wrap wrap--wide">
+          <div class="gal-head reveal">
+            <h2 class="t-display t-balance">Trabajos entregados.</h2>
+            <a class="link-arrow" href="/galeria/">
+              Ver la galería completa
+            </a>
+          </div>
+
+          <div class="gal">
+            {photos.slice(0, 9).map((photo, i) => (
+              <div class="reveal" style={`--reveal-delay:${(i % 3) * 70}ms`}>
+                <PhotoCard photo={photo} sizes="(max-width: 760px) 92vw, 30vw" width={900} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Otros servicios -->
+  <section class="section section--alt">
+    <div class="wrap wrap--wide">
+      <h2 class="t-title others__title reveal">También hacemos esto.</h2>
+      <div class="others">
+        {
+          others.map((item, i) => (
+            <div class="reveal" style={`--reveal-delay:${i * 70}ms`}>
+              <ServiceTile service={item} sizes="(max-width: 760px) 92vw, 30vw" />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title={`¿Te late algo así en ${service.name.toLowerCase()}?`}
+    message={`¡Hola! Me interesa cotizar ${service.name.toLowerCase()}.`}
+  />
+</BaseLayout>
+
+<style>
+  .head {
+    padding-top: clamp(3rem, 7vw, 5.5rem);
+    text-align: center;
+  }
+
+  .head__title {
+    max-width: 16ch;
+    margin: 0.5rem auto 0;
+    font-size: clamp(2.25rem, 6.5vw, 4.5rem);
+  }
+
+  .head__lead {
+    max-width: 50ch;
+    margin: 1.25rem auto 0;
+  }
+
+  .head__media {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .head__media :global(.photo) {
+    border-radius: var(--r-xl);
+  }
+
+  .intro__text {
+    max-width: 62ch;
+    color: var(--c-ink);
+  }
+
+  .mats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mats__pill {
+    padding: 0.4rem 0.95rem;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--r-pill);
+    color: var(--c-ink-soft);
+  }
+
+  .feat__title {
+    max-width: 17ch;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .feats {
+    display: grid;
+    gap: 2rem 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+
+  .feat {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--c-hairline);
+  }
+
+  .feat p {
+    margin-top: 0.4rem;
+  }
+
+  .gal-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .gal-head .t-display {
+    max-width: 17ch;
+  }
+
+  .gal {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .others__title {
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .others {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+
+  .others > .reveal {
+    display: flex;
+  }
+
+  .others > .reveal > :global(*) {
+    flex: 1;
+  }
+</style>

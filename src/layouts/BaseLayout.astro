@@ -85,7 +85,11 @@ const businessSchema = {
         const observer = new IntersectionObserver(
           (entries) => {
             for (const entry of entries) {
-              if (!entry.isIntersecting) continue;
+              // Se revela al entrar en pantalla y también si ya quedó por
+              // encima: al llegar por un ancla o restaurar el scroll, esos
+              // elementos nunca vuelven a intersectar y se quedarían en cero.
+              const passed = entry.boundingClientRect.bottom < 0;
+              if (!entry.isIntersecting && !passed) continue;
               entry.target.classList.add('is-in');
               observer.unobserve(entry.target);
             }

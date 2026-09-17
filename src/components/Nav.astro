@@ -196,9 +196,13 @@ const current = normalize(Astro.url.pathname);
   }
 
   .nav__sheet {
-    display: none;
     overflow: hidden;
     border-top: 1px solid var(--c-hairline);
+  }
+
+  /* El estilo de autor gana al `[hidden]` del navegador: hay que repetirlo. */
+  .nav__sheet[hidden] {
+    display: none;
   }
 
   .nav__sheet-links {
@@ -245,10 +249,6 @@ const current = normalize(Astro.url.pathname);
     .nav__toggle {
       display: block;
       margin-left: auto;
-    }
-
-    .nav__sheet {
-      display: block;
     }
 
     .nav[data-open] {

@@ -1,0 +1,316 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SERVICES } from '../data/services.js';
+import { SITE, waLink } from '../data/site.js';
+
+const channels = [
+  {
+    title: 'WhatsApp',
+    text: 'La vía más rápida. Mándanos la idea y una foto de referencia.',
+    href: waLink(),
+    label: 'Abrir chat',
+  },
+  {
+    title: 'Correo',
+    text: 'Para pedidos grandes, facturación o proyectos corporativos.',
+    href: `mailto:${SITE.email}`,
+    label: SITE.email,
+  },
+  {
+    title: 'Instagram',
+    text: 'Ahí publicamos lo último que sale del taller.',
+    href: SITE.social.instagram,
+    label: 'Ver el perfil',
+  },
+];
+---
+
+<BaseLayout
+  title="Contacto"
+  description="Pide tu cotización a Creaciones y Diseño Malim. Cuéntanos qué quieres personalizar y te respondemos con propuesta y precio."
+>
+  <section class="head">
+    <div class="wrap">
+      <p class="t-eyebrow">Contacto</p>
+      <h1 class="t-hero head__title t-balance">Cuéntanos qué traes en mente.</h1>
+      <p class="t-lead head__lead">
+        Llena los datos y se abre WhatsApp con el mensaje ya redactado. También puedes
+        escribirnos directo por cualquiera de las otras vías.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap grid">
+      <!-- Formulario -->
+      <div class="card reveal">
+        <h2 class="t-title card__title">Arma tu cotización</h2>
+
+        <form class="form" data-form>
+          <div class="field">
+            <label class="t-small field__label" for="nombre">Tu nombre</label>
+            <input class="field__input" id="nombre" name="nombre" type="text" required />
+          </div>
+
+          <div class="field">
+            <label class="t-small field__label" for="servicio">¿Qué necesitas?</label>
+            <select class="field__input" id="servicio" name="servicio">
+              {SERVICES.map((service) => <option value={service.name}>{service.name}</option>)}
+              <option value="Algo más">Algo más / no estoy seguro</option>
+            </select>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="t-small field__label" for="cantidad">¿Cuántas piezas?</label>
+              <input
+                class="field__input"
+                id="cantidad"
+                name="cantidad"
+                type="number"
+                min="1"
+                value="1"
+              />
+            </div>
+
+            <div class="field">
+              <label class="t-small field__label" for="fecha">¿Para cuándo?</label>
+              <input class="field__input" id="fecha" name="fecha" type="date" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="t-small field__label" for="detalle">Cuéntanos la idea</label>
+            <textarea
+              class="field__input"
+              id="detalle"
+              name="detalle"
+              rows="4"
+              placeholder="Nombres que llevan, colores, si es para un evento…"></textarea>
+          </div>
+
+          <button class="btn btn--accent form__submit" type="submit">Enviar por WhatsApp</button>
+
+          <p class="t-caption form__note">
+            El sitio no guarda nada: al enviar se abre WhatsApp con el mensaje ya escrito para que
+            lo revises antes de mandarlo.
+          </p>
+        </form>
+      </div>
+
+      <!-- Otras vías -->
+      <div class="aside">
+        <div class="reveal">
+          <h2 class="t-title card__title">Otras vías</h2>
+          <ul class="channels">
+            {
+              channels.map((channel) => (
+                <li class="channel">
+                  <h3 class="t-headline">{channel.title}</h3>
+                  <p class="t-body t-soft">{channel.text}</p>
+                  <a
+                    class="link-arrow"
+                    href={channel.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {channel.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="hours reveal">
+          <h3 class="t-headline">Horario</h3>
+          <dl class="hours__list">
+            {
+              SITE.hours.map((slot) => (
+                <div class="hours__row">
+                  <dt class="t-body t-soft">{slot.days}</dt>
+                  <dd class="t-body">{slot.time}</dd>
+                </div>
+              ))
+            }
+          </dl>
+          <p class="t-caption hours__note">
+            Fuera de horario puedes escribir igual: respondemos al día siguiente.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .head {
+    padding-top: clamp(3rem, 7vw, 5.5rem);
+    text-align: center;
+  }
+
+  .head__title {
+    max-width: 16ch;
+    margin: 0.5rem auto 0;
+    font-size: clamp(2.25rem, 6.5vw, 4.5rem);
+  }
+
+  .head__lead {
+    max-width: 50ch;
+    margin: 1.25rem auto 0;
+  }
+
+  .grid {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .grid {
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+  }
+
+  .card {
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    border-radius: var(--r-lg);
+    background: var(--c-bg-alt);
+  }
+
+  .card__title {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Formulario ----------------------------------------------------------- */
+
+  .form {
+    display: grid;
+    gap: 1.1rem;
+  }
+
+  .field {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .field-row {
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  }
+
+  .field__label {
+    font-weight: 600;
+    color: var(--c-ink-soft);
+  }
+
+  .field__input {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--r-sm);
+    background: var(--c-bg);
+    font-size: 1.0625rem;
+    transition:
+      border-color 0.2s var(--ease),
+      box-shadow 0.2s var(--ease);
+  }
+
+  .field__input:focus {
+    outline: none;
+    border-color: var(--c-link);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.16);
+  }
+
+  textarea.field__input {
+    resize: vertical;
+  }
+
+  .form__submit {
+    justify-self: start;
+    margin-top: 0.35rem;
+  }
+
+  .form__note {
+    max-width: 52ch;
+  }
+
+  /* Columna lateral ------------------------------------------------------ */
+
+  .aside {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+
+  .channels {
+    display: grid;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .channel {
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--c-hairline);
+  }
+
+  .channel p {
+    margin-block: 0.3rem 0.6rem;
+    font-size: 0.9375rem;
+  }
+
+  .hours__list {
+    margin: 1rem 0 0;
+  }
+
+  .hours__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.55rem;
+    border-bottom: 1px solid var(--c-hairline);
+  }
+
+  .hours__row dd {
+    margin: 0;
+  }
+
+  .hours__note {
+    margin-top: 0.85rem;
+  }
+</style>
+
+<script>
+  import { waLink } from '../data/site.js';
+
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const data = new FormData(form);
+    const get = (key: string) => String(data.get(key) ?? '').trim();
+
+    const fecha = get('fecha');
+    const detalle = get('detalle');
+    const fechaLarga = fecha
+      ? new Date(`${fecha}T00:00:00`).toLocaleDateString('es-MX', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      : '';
+
+    const lines = [
+      `¡Hola, Malim! Soy ${get('nombre')}.`,
+      `Me interesa: ${get('servicio')}.`,
+      `Cantidad: ${get('cantidad') || '1'} pieza(s).`,
+      fechaLarga ? `La necesito para el ${fechaLarga}.` : '',
+      detalle ? `Idea: ${detalle}` : '',
+    ].filter(Boolean);
+
+    window.open(waLink(lines.join('\n')), '_blank', 'noopener');
+  });
+</script>

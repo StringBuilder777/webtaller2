@@ -1,0 +1,333 @@
+---
+import { Image, getImage } from 'astro:assets';
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { GALLERY } from '../data/gallery.js';
+import { SERVICES } from '../data/services.js';
+
+// Versión grande para la vista ampliada, generada en build.
+const items = await Promise.all(
+  GALLERY.map(async (photo) => ({
+    ...photo,
+    full: (await getImage({ src: photo.src, width: 1400, format: 'webp' })).src,
+    filters: [photo.category, ...photo.tags].join(' '),
+  })),
+);
+
+const filters = [
+  { tag: 'todo', label: 'Todo', count: GALLERY.length },
+  ...SERVICES.map((service) => ({
+    tag: service.tag,
+    label: service.name,
+    count: GALLERY.filter(
+      (photo) => photo.category === service.tag || photo.tags.includes(service.tag),
+    ).length,
+  })),
+];
+---
+
+<BaseLayout
+  title="Galería"
+  description="Trabajos reales entregados por Creaciones y Diseño Malim: vasos, joyeros, bolsas, playeras, esferas, etiquetas y agendas personalizadas."
+>
+  <section class="head">
+    <div class="wrap">
+      <p class="t-eyebrow">Galería</p>
+      <h1 class="t-hero head__title t-balance">Todo lo que ha salido del taller.</h1>
+      <p class="t-lead head__lead">
+        {GALLERY.length} piezas entregadas. Filtra por servicio y toca cualquier foto para verla
+        en grande.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap wrap--wide">
+      <div class="filters" role="group" aria-label="Filtrar por servicio">
+        {
+          filters.map((filter) => (
+            <button
+              type="button"
+              class="chip"
+              data-filter={filter.tag}
+              aria-pressed={filter.tag === 'todo' ? 'true' : 'false'}
+            >
+              {filter.label}
+              <span class="chip__count">{filter.count}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <p class="t-small t-soft gal__status" role="status" data-status></p>
+
+      <div class="masonry" data-grid>
+        {
+          items.map((photo) => (
+            <figure class="brick" data-tags={photo.filters}>
+              <button
+                type="button"
+                class="brick__btn"
+                data-full={photo.full}
+                data-alt={photo.alt}
+                aria-label={`Ampliar: ${photo.alt}`}
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  width={760}
+                  sizes="(max-width: 640px) 92vw, (max-width: 1100px) 45vw, 30vw"
+                  loading="lazy"
+                />
+              </button>
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="¿Viste algo que te guste?"
+    text="Mándanos la foto de la pieza que te llamó la atención y la adaptamos a tu nombre."
+    message="¡Hola! Vi la galería y me interesa una pieza parecida."
+  />
+
+  <dialog class="lb" data-lightbox aria-label="Foto ampliada">
+    <button type="button" class="lb__close" data-lb-close aria-label="Cerrar">
+      <span aria-hidden="true">✕</span>
+    </button>
+    <img class="lb__img" data-lb-img alt="" />
+    <p class="t-small lb__caption" data-lb-caption></p>
+  </dialog>
+</BaseLayout>
+
+<style>
+  .head {
+    padding-top: clamp(3rem, 7vw, 5.5rem);
+    text-align: center;
+  }
+
+  .head__title {
+    max-width: 17ch;
+    margin: 0.5rem auto 0;
+    font-size: clamp(2.25rem, 6.5vw, 4.5rem);
+  }
+
+  .head__lead {
+    max-width: 48ch;
+    margin: 1.25rem auto 0;
+  }
+
+  /* Filtros ------------------------------------------------------------- */
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.95rem;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--r-pill);
+    background: transparent;
+    color: var(--c-ink-soft);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition:
+      background-color 0.2s var(--ease),
+      color 0.2s var(--ease),
+      border-color 0.2s var(--ease);
+  }
+
+  .chip:hover {
+    border-color: var(--c-ink-soft);
+    color: var(--c-ink);
+  }
+
+  .chip[aria-pressed='true'] {
+    border-color: var(--c-ink);
+    background: var(--c-ink);
+    color: #fff;
+  }
+
+  .chip__count {
+    font-size: 0.75rem;
+    opacity: 0.6;
+  }
+
+  .gal__status {
+    min-height: 1.25rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  /* Mosaico -------------------------------------------------------------- */
+
+  .masonry {
+    columns: 1;
+    column-gap: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .masonry {
+      columns: 2;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .masonry {
+      columns: 3;
+    }
+  }
+
+  .brick {
+    margin: 0 0 1.25rem;
+    break-inside: avoid;
+  }
+
+  .brick[hidden] {
+    display: none;
+  }
+
+  .brick__btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--r-md);
+    background: #e8e8ed;
+    cursor: zoom-in;
+  }
+
+  .brick__btn :global(img) {
+    width: 100%;
+    height: auto;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .brick__btn:hover :global(img) {
+    transform: scale(1.03);
+  }
+
+  /* Vista ampliada ------------------------------------------------------- */
+
+  .lb {
+    width: min(92vw, 60rem);
+    max-width: none;
+    max-height: 92dvh;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-lg);
+    background: var(--c-bg-ink);
+    color: var(--c-on-ink);
+    overflow: hidden;
+  }
+
+  .lb::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+
+  .lb__img {
+    width: 100%;
+    max-height: 78dvh;
+    object-fit: contain;
+    background: #000;
+  }
+
+  .lb__caption {
+    padding: 1rem 1.25rem 1.25rem;
+    color: var(--c-on-ink-soft);
+  }
+
+  .lb__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .lb__close:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+</style>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const status = document.querySelector<HTMLElement>('[data-status]');
+  const bricks = document.querySelectorAll<HTMLElement>('.brick');
+
+  const applyFilter = (tag: string) => {
+    let shown = 0;
+
+    bricks.forEach((brick) => {
+      const tags = (brick.dataset.tags ?? '').split(' ');
+      const visible = tag === 'todo' || tags.includes(tag);
+      brick.hidden = !visible;
+      if (visible) shown += 1;
+    });
+
+    chips.forEach((chip) => {
+      chip.setAttribute('aria-pressed', String(chip.dataset.filter === tag));
+    });
+
+    if (status) {
+      status.textContent =
+        tag === 'todo' ? '' : `${shown} ${shown === 1 ? 'trabajo' : 'trabajos'} en esta categoría.`;
+    }
+  };
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => applyFilter(chip.dataset.filter ?? 'todo'));
+  });
+
+  // El filtro se puede enlazar: /galeria/?s=vinyl
+  const wanted = new URLSearchParams(location.search).get('s');
+  if (wanted && [...chips].some((chip) => chip.dataset.filter === wanted)) {
+    applyFilter(wanted);
+  }
+
+  // Vista ampliada
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  const image = document.querySelector<HTMLImageElement>('[data-lb-img]');
+  const caption = document.querySelector<HTMLElement>('[data-lb-caption]');
+  const close = document.querySelector<HTMLButtonElement>('[data-lb-close]');
+
+  if (dialog && image && caption) {
+    document.querySelectorAll<HTMLButtonElement>('.brick__btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        image.src = button.dataset.full ?? '';
+        image.alt = button.dataset.alt ?? '';
+        caption.textContent = button.dataset.alt ?? '';
+        dialog.showModal();
+      });
+    });
+
+    close?.addEventListener('click', () => dialog.close());
+
+    // Clic fuera de la imagen para cerrar.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+  }
+</script>
