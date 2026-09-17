@@ -9,7 +9,7 @@ const links = [
 ];
 
 /** Normaliza para comparar rutas con y sin barra final. */
-const normalize = (path) => (path.endsWith('/') ? path : `${path}/`);
+const normalize = (path: string) => (path.endsWith('/') ? path : `${path}/`);
 const current = normalize(Astro.url.pathname);
 ---
 
@@ -44,8 +44,10 @@ const current = normalize(Astro.url.pathname);
       data-nav-toggle
     >
       <span class="visually-hidden" data-nav-toggle-label>Abrir menú</span>
-      <span class="nav__bun" aria-hidden="true"></span>
-      <span class="nav__bun" aria-hidden="true"></span>
+      <span class="nav__bars" aria-hidden="true">
+        <span class="nav__bun"></span>
+        <span class="nav__bun"></span>
+      </span>
     </button>
   </div>
 
@@ -166,31 +168,41 @@ const current = normalize(Astro.url.pathname);
     cursor: pointer;
   }
 
+  /* Las barras viven en su propio contenedor para que :first-child y
+     :last-child no cuenten el span del texto accesible. */
+  .nav__bars {
+    position: absolute;
+    inset: 0;
+  }
+
   .nav__bun {
     position: absolute;
+    top: 50%;
     left: 50%;
     width: 1rem;
     height: 1px;
     background: var(--c-ink);
+    /* Ángulo explícito: interpolar desde `none` deja la transición a medias. */
+    rotate: 0deg;
     transition:
       translate 0.3s var(--ease),
       rotate 0.3s var(--ease);
   }
 
-  .nav__bun:nth-of-type(1) {
+  .nav__bun:first-child {
     translate: -50% -3px;
   }
 
-  .nav__bun:nth-of-type(2) {
+  .nav__bun:last-child {
     translate: -50% 3px;
   }
 
-  .nav[data-open] .nav__bun:nth-of-type(1) {
+  .nav[data-open] .nav__bun:first-child {
     translate: -50% 0;
     rotate: 45deg;
   }
 
-  .nav[data-open] .nav__bun:nth-of-type(2) {
+  .nav[data-open] .nav__bun:last-child {
     translate: -50% 0;
     rotate: -45deg;
   }
