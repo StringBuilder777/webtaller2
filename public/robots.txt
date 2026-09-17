@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Actualiza el dominio si cambias SITE.url en src/data/site.js
+Sitemap: https://creacionesmalim.com/sitemap-index.xml
