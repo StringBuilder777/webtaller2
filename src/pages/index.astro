@@ -1,0 +1,392 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Faq from '../components/Faq.astro';
+import PhotoCard from '../components/PhotoCard.astro';
+import ServiceTile from '../components/ServiceTile.astro';
+import Showcase from '../components/Showcase.astro';
+import { FEATURED, getPhoto } from '../data/gallery.js';
+import { SERVICES } from '../data/services.js';
+import { SITE, waLink } from '../data/site.js';
+
+const hero = getPhoto('malim-33');
+
+const steps = [
+  {
+    title: 'Cuéntanos la idea',
+    text: 'Nombre, ocasión, cuántas piezas y para cuándo. Una foto de referencia ayuda mucho.',
+  },
+  {
+    title: 'Te mandamos el diseño',
+    text: 'Una propuesta digital con la tipografía y el acabado montados sobre el producto.',
+  },
+  {
+    title: 'Cortamos y aplicamos',
+    text: 'Con el visto bueno se corta el vinyl, se despunta a mano y se aplica pieza por pieza.',
+  },
+  {
+    title: 'Lo recoges o te lo llevamos',
+    text: 'Entrega en el taller o envío por paquetería. Te avisamos en cuanto está listo.',
+  },
+];
+
+const materials = [...new Set(SERVICES.flatMap((service) => service.materials))];
+
+const faq = [
+  {
+    q: '¿Cuál es el pedido mínimo?',
+    a: 'Ninguno. Personalizamos desde una sola pieza, aunque en lotes de diez o más el precio por pieza baja.',
+  },
+  {
+    q: '¿Cuánto tardan en entregar?',
+    a: 'De dos a cuatro días hábiles para pedidos pequeños, contados desde que apruebas el diseño. En temporada alta (Navidad, Día de las Madres y fin de cursos) conviene apartar con una semana de anticipación.',
+  },
+  {
+    q: '¿Puedo llevar mi propio vaso, playera o agenda?',
+    a: 'Sí. Si ya tienes el artículo lo personalizamos y solo se cobra el diseño y la aplicación. Solo pedimos que la superficie esté limpia y sin rayones profundos.',
+  },
+  {
+    q: '¿El vinyl se despega al lavar?',
+    a: 'No si se cuida. En textil, lava al revés con agua fría y sin secadora. En vasos y termos, lavado a mano: el lavavajillas es el enemigo del vinyl permanente.',
+  },
+  {
+    q: '¿Hacen envíos?',
+    a: 'Sí, por paquetería. El costo depende del peso y del destino, y se cotiza junto con el pedido.',
+  },
+  {
+    q: '¿Cómo se aparta el pedido?',
+    a: 'Con el 50 % de anticipo una vez aprobado el diseño. El resto se liquida al entregar.',
+  },
+];
+---
+
+<BaseLayout title={`${SITE.name} — ${SITE.tagline}`} bareTitle description={SITE.description}>
+  <!-- Portada -->
+  <section class="hero">
+    <div class="wrap hero__copy">
+      <p class="t-eyebrow hero__eyebrow">{SITE.name}</p>
+      <h1 class="t-hero hero__title">
+        Personalizado.<br /><span class="t-holo">Al detalle.</span>
+      </h1>
+      <p class="t-lead hero__lead">
+        Diseñamos, cortamos y aplicamos vinyl sobre lo que quieras: vasos, joyeros, bolsas,
+        playeras, agendas y esferas. Tu nombre, con el acabado que lo hace tuyo.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--accent" href="/contacto/">Pedir cotización</a>
+        <a class="link-arrow" href="/galeria/">Ver la galería</a>
+      </div>
+    </div>
+
+    <div class="wrap wrap--wide hero__media">
+      <PhotoCard
+        photo={hero}
+        ratio="landscape"
+        width={1800}
+        sizes="(max-width: 1440px) 92vw, 1360px"
+        eager
+      />
+    </div>
+  </section>
+
+  <!-- Lo último que salió del taller -->
+  <section class="section section--tight">
+    <div class="wrap wrap--wide">
+      <div class="shelf-head reveal">
+        <h2 class="t-title">Lo último que salió del taller.</h2>
+        <a class="link-arrow" href="/galeria/">Ver todo</a>
+      </div>
+
+      <div class="shelf">
+        {
+          FEATURED.map((photo) => (
+            <PhotoCard photo={photo} ratio="square" width={800} sizes="min(78vw, 22rem)" />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Servicios -->
+  <section class="section section--alt" id="servicios">
+    <div class="wrap wrap--wide">
+      <header class="sec-head reveal">
+        <p class="t-eyebrow">Lo que hacemos</p>
+        <h2 class="t-display t-balance">Seis formas de ponerle tu nombre.</h2>
+      </header>
+
+      <div class="grid-services">
+        {
+          SERVICES.map((service, i) => (
+            <div class="reveal" style={`--reveal-delay:${Math.min(i, 3) * 70}ms`}>
+              <ServiceTile
+                service={service}
+                wide={i === 0}
+                sizes={i === 0 ? '(max-width: 900px) 92vw, 46vw' : '(max-width: 760px) 92vw, 30vw'}
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Destacados -->
+  <Showcase
+    eyebrow="Vinyl holográfico"
+    title="Cambia de color según cómo le dé la luz."
+    text="Es el acabado que más nos piden y el que mejor distingue una pieza hecha en el taller. Se corta con la misma precisión en una letra script delgada que en una silueta completa."
+    photo={getPhoto('malim-24')}
+    href="/servicios/vinyl/"
+    linkLabel="Conocer los materiales"
+  />
+
+  <Showcase
+    eyebrow="Crafter"
+    title="Esferas que se entregan encendidas."
+    text="Acrílico transparente, relleno puesto a mano, luces LED y moño. El nombre va en vinyl dorado o espejo, y la pieza llega lista para colgar en el árbol."
+    photo={getPhoto('malim-28')}
+    href="/servicios/crafter/"
+    linkLabel="Ver trabajos de crafter"
+    flip
+    dark
+  />
+
+  <Showcase
+    eyebrow="Sets completos"
+    title="Toda la mesa hablando el mismo idioma."
+    text="Vasos, bolsas, etiquetas y joyeros con la misma tipografía y el mismo acabado. Un diseño, un nombre distinto en cada pieza."
+    photo={getPhoto('malim-25')}
+    href="/servicios/personalizados/"
+    linkLabel="Ver personalizados"
+  />
+
+  <!-- Proceso -->
+  <section class="section section--alt" id="proceso">
+    <div class="wrap wrap--wide">
+      <header class="sec-head reveal">
+        <p class="t-eyebrow">Cómo trabajamos</p>
+        <h2 class="t-display t-balance">De la idea a la pieza en cuatro pasos.</h2>
+      </header>
+
+      <ol class="steps">
+        {
+          steps.map((step, i) => (
+            <li class="step reveal" style={`--reveal-delay:${i * 80}ms`}>
+              <span class="step__num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="t-headline">{step.title}</h3>
+              <p class="t-body t-soft">{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Materiales -->
+  <section class="section section--tight">
+    <div class="wrap reveal">
+      <h2 class="t-title t-balance mats__title">
+        Trabajamos con lo que haga falta para que la pieza quede bien.
+      </h2>
+      <ul class="mats">
+        {materials.map((material) => <li class="mats__pill t-small">{material}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <Faq items={faq} />
+
+  <CtaBand
+    title="Tu nombre. En lo que tú quieras."
+    text="Cuéntanos qué traes en mente y te mandamos propuesta y precio el mismo día."
+    message={`¡Hola, ${SITE.shortName}! Vi su página y quiero cotizar un personalizado.`}
+  />
+
+  <a
+    class="wa-fab"
+    href={waLink()}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Escribir por WhatsApp"
+  >
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor">
+      <path
+        d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.95 1.16-.17.2-.35.22-.65.08-.3-.15-1.26-.47-2.4-1.48-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.42-.07-.13-.27-.2-.57-.35zM12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91A9.85 9.85 0 0 0 12.04 2zm5.77 15.68a8.2 8.2 0 0 1-5.77 2.39h-.01a8.22 8.22 0 0 1-4.18-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.53-3.7 8.23-8.23 8.23z"
+      ></path>
+    </svg>
+  </a>
+</BaseLayout>
+
+<style>
+  /* Portada ------------------------------------------------------------- */
+
+  .hero {
+    padding-top: clamp(3.5rem, 9vw, 7rem);
+    padding-bottom: clamp(3rem, 7vw, 5.5rem);
+    background: var(--c-bg-ink);
+    color: var(--c-on-ink);
+    text-align: center;
+  }
+
+  .hero__eyebrow {
+    color: var(--c-on-ink-soft);
+  }
+
+  .hero__title {
+    margin-top: 0.5rem;
+  }
+
+  .hero__lead {
+    max-width: 46ch;
+    margin: 1.25rem auto 0;
+    color: var(--c-on-ink-soft);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.9rem 1.75rem;
+    margin-top: 2rem;
+  }
+
+  .hero__actions .link-arrow {
+    color: var(--c-link-dark);
+  }
+
+  .hero__media {
+    margin-top: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .hero__media :global(.photo) {
+    border-radius: var(--r-xl);
+  }
+
+  /* Encabezados de sección ---------------------------------------------- */
+
+  .sec-head {
+    max-width: 24ch;
+    margin-bottom: clamp(2rem, 4.5vw, 3.5rem);
+  }
+
+  .sec-head .t-display {
+    margin-top: 0.4rem;
+  }
+
+  .shelf-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Rejilla de servicios ------------------------------------------------- */
+
+  .grid-services {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+
+  .grid-services > .reveal {
+    display: flex;
+  }
+
+  .grid-services > .reveal > :global(*) {
+    flex: 1;
+  }
+
+  @media (min-width: 900px) {
+    .grid-services {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-services > .reveal:first-child {
+      grid-column: span 3;
+    }
+  }
+
+  /* Proceso -------------------------------------------------------------- */
+
+  .steps {
+    display: grid;
+    gap: 2rem 1.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  }
+
+  .step {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--c-hairline);
+  }
+
+  .step__num {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--c-ink-faint);
+  }
+
+  .step p {
+    margin-top: 0.4rem;
+    font-size: 0.9375rem;
+  }
+
+  /* Materiales ----------------------------------------------------------- */
+
+  .mats__title {
+    max-width: 22ch;
+  }
+
+  .mats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mats__pill {
+    padding: 0.4rem 0.95rem;
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--r-pill);
+    color: var(--c-ink-soft);
+  }
+
+  /* Botón flotante de WhatsApp ------------------------------------------- */
+
+  .wa-fab {
+    position: fixed;
+    right: clamp(1rem, 3vw, 2rem);
+    bottom: clamp(1rem, 3vw, 2rem);
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    transition:
+      transform 0.3s var(--ease),
+      box-shadow 0.3s var(--ease);
+  }
+
+  .wa-fab:hover {
+    transform: scale(1.07);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    text-decoration: none;
+  }
+</style>

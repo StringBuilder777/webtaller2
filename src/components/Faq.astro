@@ -1,0 +1,114 @@
+---
+interface Props {
+  items: { q: string; a: string }[];
+  title?: string;
+  id?: string;
+}
+
+const { items, title = 'Preguntas frecuentes', id = 'preguntas' } = Astro.props;
+---
+
+<section class="section section--alt" id={id}>
+  <div class="wrap reveal">
+    <h2 class="t-display faq__title t-balance">{title}</h2>
+
+    <div class="faq__list">
+      {
+        items.map((item) => (
+          <details class="faq__item" name="faq">
+            <summary class="faq__q">
+              <span class="t-headline">{item.q}</span>
+              <span class="faq__icon" aria-hidden="true" />
+            </summary>
+            <div class="faq__a">
+              <p class="t-body t-soft">{item.a}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__title {
+    margin-bottom: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  .faq__item {
+    border-top: 1px solid var(--c-hairline);
+  }
+
+  .faq__item:last-child {
+    border-bottom: 1px solid var(--c-hairline);
+  }
+
+  .faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.35rem;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Cruz que se convierte en «-» al abrir. */
+  .faq__icon {
+    position: relative;
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 1.5px;
+    background: var(--c-ink-soft);
+    transition:
+      rotate 0.35s var(--ease),
+      opacity 0.35s var(--ease);
+  }
+
+  .faq__icon::after {
+    rotate: 90deg;
+  }
+
+  .faq__item[open] .faq__icon::after {
+    rotate: 180deg;
+    opacity: 0;
+  }
+
+  .faq__a {
+    padding-bottom: 1.5rem;
+  }
+
+  .faq__a p {
+    max-width: 68ch;
+  }
+
+  /* Despliegue animado donde el navegador ya lo soporta. */
+  @supports (interpolate-size: allow-keywords) {
+    .faq__item::details-content {
+      height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition:
+        height 0.4s var(--ease),
+        opacity 0.3s var(--ease),
+        content-visibility 0.4s allow-discrete;
+    }
+
+    .faq__item[open]::details-content {
+      height: auto;
+      opacity: 1;
+    }
+  }
+</style>

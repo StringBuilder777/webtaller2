@@ -1,0 +1,121 @@
+---
+import PhotoCard from './PhotoCard.astro';
+import { getPhoto } from '../data/gallery.js';
+
+interface Props {
+  service: {
+    slug: string;
+    name: string;
+    tagline: string;
+    summary: string;
+    heroId: string;
+  };
+  wide?: boolean;
+  sizes?: string;
+}
+
+const { service, wide = false, sizes = '(max-width: 760px) 92vw, 33vw' } = Astro.props;
+const photo = getPhoto(service.heroId);
+---
+
+<a class:list={['stile', { 'stile--wide': wide }]} href={`/servicios/${service.slug}/`}>
+  <div class="stile__media">
+    <PhotoCard photo={photo} ratio={wide ? 'landscape' : 'auto'} sizes={sizes} width={1100} />
+  </div>
+
+  <div class="stile__body">
+    <p class="t-caption stile__kicker">{service.name}</p>
+    <h3 class="t-title stile__title t-balance">{service.tagline}</h3>
+    <p class="t-body t-soft stile__text">{service.summary}</p>
+    <span class="link-arrow stile__link">Ver {service.name.toLowerCase()}</span>
+  </div>
+</a>
+
+<style>
+  .stile {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--r-lg);
+    background: var(--c-bg-alt);
+    color: var(--c-ink);
+    transition: transform 0.4s var(--ease);
+  }
+
+  .stile:hover {
+    text-decoration: none;
+    transform: translateY(-4px);
+  }
+
+  .stile:hover :global(.photo img) {
+    transform: scale(1.045);
+  }
+
+  .stile__media :global(.photo) {
+    border-radius: 0;
+  }
+
+  .stile__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: clamp(1.35rem, 2.6vw, 2rem);
+  }
+
+  .stile__kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    color: var(--c-ink-faint);
+  }
+
+  .stile__title {
+    font-size: clamp(1.3125rem, 2.2vw, 1.75rem);
+  }
+
+  .stile__text {
+    flex: 1;
+    font-size: 0.9375rem;
+  }
+
+  .stile__link {
+    margin-top: 0.35rem;
+    font-size: 0.9375rem;
+  }
+
+  .stile:hover .stile__link::after {
+    transform: translateX(3px);
+  }
+
+  @media (min-width: 900px) {
+    .stile--wide {
+      flex-direction: row-reverse;
+      grid-column: span 2;
+    }
+
+    .stile--wide > * {
+      flex: 1 1 50%;
+    }
+
+    .stile--wide .stile__media :global(.photo) {
+      height: 100%;
+      aspect-ratio: auto;
+    }
+
+    .stile--wide .stile__body {
+      justify-content: center;
+      padding: clamp(2rem, 4vw, 3.25rem);
+    }
+
+    .stile--wide .stile__title {
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+    }
+
+    .stile--wide .stile__text {
+      flex: 0;
+      font-size: 1.0625rem;
+    }
+  }
+</style>

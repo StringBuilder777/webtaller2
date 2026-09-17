@@ -1,0 +1,70 @@
+---
+import PhotoCard from './PhotoCard.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  text: string;
+  photo: { src: ImageMetadata; alt: string; portrait: boolean };
+  href?: string;
+  linkLabel?: string;
+  /** Invierte el orden: imagen a la izquierda. */
+  flip?: boolean;
+  dark?: boolean;
+}
+
+const { eyebrow, title, text, photo, href, linkLabel, flip = false, dark = false } = Astro.props;
+---
+
+<section class:list={['show', { 'show--flip': flip, 'section--ink': dark }]}>
+  <div class="wrap wrap--wide show__grid">
+    <div class="show__copy reveal">
+      <p class="t-eyebrow">{eyebrow}</p>
+      <h2 class="t-display t-balance show__title">{title}</h2>
+      <p class="t-lead show__text">{text}</p>
+      {href && linkLabel && <a class="link-arrow" href={href}>{linkLabel}</a>}
+    </div>
+
+    <div class="show__media reveal" style="--reveal-delay:110ms">
+      <PhotoCard photo={photo} ratio="auto" width={1400} sizes="(max-width: 900px) 92vw, 46vw" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .show {
+    padding-block: var(--section-y);
+  }
+
+  .show__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+
+  .show__copy > * + * {
+    margin-top: 1rem;
+  }
+
+  .show__title {
+    max-width: 14ch;
+  }
+
+  .show__text {
+    max-width: 44ch;
+  }
+
+  .show__media :global(.photo) {
+    border-radius: var(--r-lg);
+  }
+
+  @media (min-width: 900px) {
+    .show__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .show--flip .show__copy {
+      order: 2;
+    }
+  }
+</style>
