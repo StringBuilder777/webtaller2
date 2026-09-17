@@ -25,6 +25,10 @@ export default defineConfig({
     // Las fotos del taller son el contenido principal del sitio: se sirven
     // siempre como imágenes responsivas para no penalizar el móvil.
     layout: 'constrained',
+    // Las fotos originales miden entre 1200 y 1600 px: con la escalera por
+    // defecto salían trece variantes por foto. Cuatro escalones cubren de
+    // móvil a retina sin llenar el build de archivos que nadie pide.
+    breakpoints: [480, 768, 1080, 1600],
   },
   build: {
     inlineStylesheets: 'auto',
