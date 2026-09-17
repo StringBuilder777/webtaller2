@@ -3,6 +3,7 @@ import { Font } from 'astro:assets';
 
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import WhatsAppFab from '../components/WhatsAppFab.astro';
 import { SITE } from '../data/site.js';
 import '../styles/global.css';
 
@@ -74,6 +75,7 @@ const businessSchema = {
       <slot />
     </main>
     <Footer />
+    <WhatsAppFab />
 
     <script>
       // Revelado progresivo de secciones conforme entran al viewport.
